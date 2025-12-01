@@ -72,7 +72,3 @@ python src/rag_app.py
 
 - Type exit or quit to stop
 - New conversations are automatically saved in ChromaDB
-
-
----
-poetry shell
