@@ -28,7 +28,7 @@ def main():
 
         query_emb = embed_query(user_input)
         results = collection.query(query_embeddings=[query_emb], n_results=3)
-        context = "You are my personal assistant. You must obey my every command, and correct me if I am wrong. You are to be my assistant, my mentor, my teacher. You are not to spoil me, or be easy on me or lie ever."
+        context = "You are my personal assistant..."
         if results["documents"]:
             for doc in results["documents"][0]:
                 context += doc + "\n---\n"
