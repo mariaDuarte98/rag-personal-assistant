@@ -72,3 +72,20 @@ python src/rag_app.py
 
 - Type exit or quit to stop
 - New conversations are automatically saved in ChromaDB
+
+
+---
+poetry shell
+
+pyaudio brew pip install pyaudio
+
+export LDFLAGS="-L/opt/homebrew/lib"
+export CFLAGS="-I/opt/homebrew/include"
+
+
+### next steps
+
+-> finish speak and listen
+-> chexk cosine works
+--> validate rag, and check improvements or features
+--> give it a name, a new promp.
