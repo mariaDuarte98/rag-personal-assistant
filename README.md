@@ -25,21 +25,21 @@ A personal AI assistant powered by a **Retrieval-Augmented Generation (RAG)** pi
 
 ```mermaid
 flowchart TD
-    subgraph Ingestion
-        A[📄 Local Documents] -->|load & chunk| B[ingest.py]
+    subgraph Ingestion["⬆️ Ingestion — run once"]
+        A[📄 Local Documents] -->|load| B[ingest.py]
         B -->|embed| C[embeddings.py]
-        C -->|store vectors| D[(ChromaDB)]
+        C -->|store vectors| D[(docs_collection\nChromaDB)]
     end
 
-    subgraph Query
-        E[👤 User Input] --> F[rag_app.py]
-        F -->|embed query| C
+    subgraph Query["💬 Query — runtime"]
+        E[👤 User Input] -->|embed| C
         C -->|similarity search| D
-        D -->|top-k chunks| G[Context Builder]
-        H[(Conversation Memory\nChromaDB)] -->|past turns| G
-        G -->|prompt + context| I[gemini_client.py]
+        C -->|similarity search| G[(memory_collection\nChromaDB)]
+        D -->|top-k doc chunks| H[retrieve_context]
+        G -->|top-k past turns| H
+        H -->|prompt + context| I[gemini_client.py]
         I -->|Gemini API| J[🤖 Response]
-        J -->|save turn| H
+        J -->|save turn| G
     end
 ```
 
