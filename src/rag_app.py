@@ -1,25 +1,45 @@
-import os
-from datetime import datetime
 import chromadb
 from embeddings import get_embedding
 from gemini_client import get_gemini_llm
-from typing import List, Dict
 
-DATA_DIR = "docs"
+CHROMA_PATH = "chroma_db"
 
-def add_memory(collection, text, memory_id) -> None:
-    """Add conversation memory to ChromaDB."""
-    emb = get_embedding(text)
-    collection.add(documents=[text], embeddings=[emb], ids=[memory_id])
 
-def embed_query(query) -> list[float]:
+def embed_query(query: str) -> list[float]:
     return get_embedding(query)
+
+
+def add_memory(memory_collection, text: str, memory_id: str) -> None:
+    """Persist a conversation turn to the memory collection."""
+    emb = get_embedding(text)
+    memory_collection.add(documents=[text], embeddings=[emb], ids=[memory_id])
+
+
+def retrieve_context(docs_collection, memory_collection, query_emb: list[float]) -> str:
+    """Fetch relevant chunks from both docs and memory collections."""
+    context = ""
+
+    docs_results = docs_collection.query(query_embeddings=[query_emb], n_results=3)
+    if docs_results["documents"] and docs_results["documents"][0]:
+        context += "### From your documents:\n"
+        for doc in docs_results["documents"][0]:
+            context += doc + "\n---\n"
+
+    memory_results = memory_collection.query(query_embeddings=[query_emb], n_results=2)
+    if memory_results["documents"] and memory_results["documents"][0]:
+        context += "\n### From past conversations:\n"
+        for mem in memory_results["documents"][0]:
+            context += mem + "\n---\n"
+
+    return context
+
 
 def main():
     llm = get_gemini_llm()
-    client = chromadb.PersistentClient("chroma_db")
-    collection = client.get_or_create_collection(
-        "docs")  # all memories in same collection
+    client = chromadb.PersistentClient(CHROMA_PATH)
+
+    docs_collection = client.get_or_create_collection("docs")
+    memory_collection = client.get_or_create_collection("memory")
 
     while True:
         user_input = input("\nAsk your assistant something: ")
@@ -27,20 +47,16 @@ def main():
             break
 
         query_emb = embed_query(user_input)
-        results = collection.query(query_embeddings=[query_emb], n_results=3)
-        context = "You are my personal assistant..."
-        if results["documents"]:
-            for doc in results["documents"][0]:
-                context += doc + "\n---\n"
+        context = retrieve_context(docs_collection, memory_collection, query_emb)
 
-        prompt = f"Context:\n{context}\nUser: {user_input}"
+        prompt = f"You are a personal assistant.\n\nContext:\n{context}\nUser: {user_input}"
         answer = llm(prompt)
         print("\nAssistant:", answer)
 
-        # 3. Guardar memória automaticamente
         full_memory = f"User: {user_input}\nAssistant: {answer}"
+        memory_id = f"memory-{len(memory_collection.get()['ids'])}"
+        add_memory(memory_collection, full_memory, memory_id)
 
-        add_memory(collection, full_memory, f"memory-{len(collection.get()['ids'])}")
 
 if __name__ == "__main__":
     main()
