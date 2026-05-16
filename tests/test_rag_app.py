@@ -57,7 +57,7 @@ class TestAddMemory:
 class TestRetrieveContext:
 
     def test_includes_docs_in_context(self):
-        docs_collection = make_mock_collection(docs=["AI is transforming industries."])
+        docs_collection = make_mock_collection(docs=["AI is transforming industries."], ids=[0])
         memory_collection = make_mock_collection(docs=[])
         from rag_app import retrieve_context
 
@@ -68,7 +68,7 @@ class TestRetrieveContext:
 
     def test_includes_memory_in_context(self):
         docs_collection = make_mock_collection(docs=[])
-        memory_collection = make_mock_collection(docs=["User: hello\nAssistant: hi!"])
+        memory_collection = make_mock_collection(docs=["User: hello\nAssistant: hi!"], ids=[0])
         from rag_app import retrieve_context
 
         context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
@@ -77,8 +77,8 @@ class TestRetrieveContext:
         assert "From past conversations" in context
 
     def test_combines_docs_and_memory(self):
-        docs_collection = make_mock_collection(docs=["Document content."])
-        memory_collection = make_mock_collection(docs=["Past conversation."])
+        docs_collection = make_mock_collection(docs=["Document content."], ids=[0])
+        memory_collection = make_mock_collection(docs=["Past conversation."], ids=[0])
         from rag_app import retrieve_context
 
         context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
@@ -102,5 +102,7 @@ class TestRetrieveContext:
 
         retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
 
-        docs_collection.query.assert_called_once()
-        memory_collection.query.assert_called_once()
+        docs_collection.get.assert_called_once()
+        docs_collection.query.assert_not_called()
+        memory_collection.get.assert_called_once()
+        memory_collection.query.assert_not_called()
