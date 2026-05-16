@@ -1,5 +1,5 @@
 """Tests for src/rag_app.py"""
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 
 def make_mock_collection(docs: list[str] | None = None, ids: list[str] | None = None):
