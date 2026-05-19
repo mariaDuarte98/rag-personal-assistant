@@ -84,6 +84,53 @@ class TestAddMemory:
         assert returned_id == "memory-99"
 
 
+class TestBuildPrompt:
+
+    def test_includes_query_in_prompt(self):
+        from rag_app import build_prompt
+        result = build_prompt("What is RAG?", "", [])
+        assert "What is RAG?" in result
+
+    def test_includes_context_in_prompt(self):
+        from rag_app import build_prompt
+        result = build_prompt("query", "Some document context.", [])
+        assert "Some document context." in result
+
+    def test_includes_history_in_prompt(self):
+        from rag_app import build_prompt
+        history = [{"user": "hello", "assistant": "hi there"}]
+        result = build_prompt("next question", "context", history)
+        assert "hello" in result
+        assert "hi there" in result
+
+    def test_empty_context_shows_fallback(self):
+        from rag_app import build_prompt
+        result = build_prompt("query", "", [])
+        assert "No relevant context found." in result
+
+    def test_empty_history_shows_fallback(self):
+        from rag_app import build_prompt
+        result = build_prompt("query", "some context", [])
+        assert "No previous conversation." in result
+
+    def test_multiple_history_turns_all_included(self):
+        from rag_app import build_prompt
+        history = [
+            {"user": "first", "assistant": "answer one"},
+            {"user": "second", "assistant": "answer two"},
+        ]
+        result = build_prompt("third", "ctx", history)
+        assert "first" in result
+        assert "second" in result
+        assert "answer one" in result
+        assert "answer two" in result
+
+    def test_system_prompt_is_present(self):
+        from rag_app import build_prompt
+        result = build_prompt("query", "ctx", [])
+        assert "personal assistant" in result.lower()
+
+
 class TestRetrieveContext:
 
     def test_includes_docs_in_context(self):

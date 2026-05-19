@@ -4,6 +4,16 @@ from embeddings import get_embedding
 from gemini_client import get_gemini_llm
 from config import CHROMA_PATH
 
+MAX_HISTORY = 5
+
+_SYSTEM_PROMPT = """You are a knowledgeable personal assistant with access to a curated document library and memory of past conversations.
+
+When answering:
+- Use the provided context to give accurate, grounded answers
+- If the context does not contain the information needed, say so clearly — do not guess
+- Keep answers concise and directly relevant to the question
+- When referencing specific information, mention the source document"""
+
 
 def embed_query(query: str) -> list[float]:
     return get_embedding(query)
@@ -46,12 +56,30 @@ def retrieve_context(docs_collection, memory_collection, query_emb: list[float])
     return context
 
 
+def build_prompt(query: str, context: str, history: list[dict[str, str]]) -> str:
+    history_text = "\n\n".join(
+        f"User: {turn['user']}\nAssistant: {turn['assistant']}"
+        for turn in history
+    ) if history else "No previous conversation."
+
+    context_text = context.strip() if context.strip() else "No relevant context found."
+
+    return (
+        f"{_SYSTEM_PROMPT}\n\n"
+        f"### Relevant context\n{context_text}\n\n"
+        f"### Recent conversation\n{history_text}\n\n"
+        f"### Current question\n{query}"
+    )
+
+
 def main():
     llm = get_gemini_llm()
     client = chromadb.PersistentClient(CHROMA_PATH)
 
     docs_collection = client.get_or_create_collection("docs")
     memory_collection = client.get_or_create_collection("memory")
+
+    history: list[dict[str, str]] = []
 
     while True:
         user_input = input("\nAsk your assistant something: ")
@@ -60,11 +88,12 @@ def main():
 
         query_emb = embed_query(user_input)
         context = retrieve_context(docs_collection, memory_collection, query_emb)
+        prompt = build_prompt(user_input, context, history[-MAX_HISTORY:])
 
-        prompt = f"You are a personal assistant.\n\nContext:\n{context}\nUser: {user_input}"
         answer = llm(prompt)
         print("\nAssistant:", answer)
 
+        history.append({"user": user_input, "assistant": answer})
         add_memory(memory_collection, f"User: {user_input}\nAssistant: {answer}")
 
 
