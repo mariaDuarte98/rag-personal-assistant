@@ -3,19 +3,37 @@ import chromadb
 from embeddings import get_embedding
 from typing import List, Dict
 
-DATA_DIR = "docs" # folder where your text files are stored
+DATA_DIR = "docs"
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 50
 
-def embed_text(text) -> list[float]:
-    return get_embedding(text)
 
-def load_documents() -> List[Dict[str, str]]:
+def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> List[str]:
+    """Split text into overlapping fixed-size chunks."""
+    if not text.strip():
+        return []
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = min(start + chunk_size, len(text))
+        chunks.append(text[start:end])
+        if end == len(text):
+            break
+        start += chunk_size - overlap
+    return chunks
+
+
+def load_documents(data_dir: str = DATA_DIR) -> List[Dict[str, str]]:
+    if not os.path.isdir(data_dir):
+        raise FileNotFoundError(f"Documents directory not found: {data_dir}")
     docs = []
-    for filename in os.listdir(DATA_DIR):
+    for filename in os.listdir(data_dir):
         if filename.endswith(".txt"):
-            path = os.path.join(DATA_DIR, filename)
+            path = os.path.join(data_dir, filename)
             with open(path, "r", encoding="utf-8") as f:
                 docs.append({"id": filename, "text": f.read()})
     return docs
+
 
 def main():
     client = chromadb.PersistentClient("chroma_db")
@@ -23,14 +41,17 @@ def main():
 
     docs = load_documents()
     for doc in docs:
-        emb = embed_text(doc["text"])
-        collection.add(
-            documents=[doc["text"]],
-            embeddings=[emb],
-            ids=[doc["id"]]
-        )
+        chunks = chunk_text(doc["text"])
+        for i, chunk in enumerate(chunks):
+            emb = get_embedding(chunk)
+            collection.add(
+                documents=[chunk],
+                embeddings=[emb],
+                ids=[f"{doc['id']}-chunk-{i}"],
+            )
 
-    print("Ingestion complete! Documents embedded.")
+    print(f"Ingestion complete. {len(docs)} document(s) processed.")
+
 
 if __name__ == "__main__":
     main()

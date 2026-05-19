@@ -1,3 +1,4 @@
+import uuid
 import chromadb
 from embeddings import get_embedding
 from gemini_client import get_gemini_llm
@@ -9,32 +10,32 @@ def embed_query(query: str) -> list[float]:
     return get_embedding(query)
 
 
-def add_memory(memory_collection, text: str, memory_id: str) -> None:
-    """Persist a conversation turn to the memory collection."""
+def add_memory(memory_collection, text: str, memory_id: str | None = None) -> str:
+    """Persist a conversation turn. Returns the id used."""
+    if memory_id is None:
+        memory_id = f"memory-{uuid.uuid4().hex}"
     emb = get_embedding(text)
     memory_collection.add(documents=[text], embeddings=[emb], ids=[memory_id])
+    return memory_id
 
 
 def retrieve_context(docs_collection, memory_collection, query_emb: list[float]) -> str:
-    """Fetch relevant chunks from both docs and memory collections."""
     context = ""
-    
+
     n_docs = len(docs_collection.get()["ids"])
     if n_docs > 0:
-        docs_results = docs_collection.query(query_embeddings=[query_emb], n_results=min(3, n_docs))
+        results = docs_collection.query(query_embeddings=[query_emb], n_results=min(3, n_docs))
         context += "### From your documents:\n"
-        for doc in docs_results["documents"][0]:
+        for doc in results["documents"][0]:
             context += doc + "\n---\n"
 
     n_mem = len(memory_collection.get()["ids"])
     if n_mem > 0:
-        memory_results = memory_collection.query(
-            query_embeddings=[query_emb],
-              n_results=min(2, n_mem))
+        results = memory_collection.query(query_embeddings=[query_emb], n_results=min(2, n_mem))
         context += "\n### From past conversations:\n"
-        for mem in memory_results["documents"][0]:
+        for mem in results["documents"][0]:
             context += mem + "\n---\n"
-        
+
     return context
 
 
@@ -57,9 +58,7 @@ def main():
         answer = llm(prompt)
         print("\nAssistant:", answer)
 
-        full_memory = f"User: {user_input}\nAssistant: {answer}"
-        memory_id = f"memory-{len(memory_collection.get()['ids'])}"
-        add_memory(memory_collection, full_memory, memory_id)
+        add_memory(memory_collection, f"User: {user_input}\nAssistant: {answer}")
 
 
 if __name__ == "__main__":
