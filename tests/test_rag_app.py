@@ -2,13 +2,20 @@
 from unittest.mock import MagicMock, patch
 
 
-def make_mock_collection(docs: list[str] | None = None, ids: list[str] | None = None):
+def make_mock_collection(
+    docs: list[str] | None = None,
+    ids: list[str] | None = None,
+    metadatas: list[dict] | None = None,
+):
     collection = MagicMock()
     collection.get.return_value = {"ids": ids or []}
+    _docs = docs or []
+    _metas = metadatas or [{}] * len(_docs)
     collection.query.return_value = {
-        "documents": [docs or []],
-        "distances": [[0.1] * len(docs or [])],
-        "ids": [[f"id_{i}" for i in range(len(docs or []))]],
+        "documents": [_docs],
+        "metadatas": [_metas],
+        "distances": [[0.1] * len(_docs)],
+        "ids": [[f"id_{i}" for i in range(len(_docs))]],
     }
     return collection
 
@@ -80,8 +87,12 @@ class TestAddMemory:
 class TestRetrieveContext:
 
     def test_includes_docs_in_context(self):
-        docs_collection = make_mock_collection(docs=["AI is transforming industries."], ids=[0])
-        memory_collection = make_mock_collection(docs=[])
+        docs_collection = make_mock_collection(
+            docs=["AI is transforming industries."],
+            ids=["id_0"],
+            metadatas=[{"source": "ai.txt", "chunk_index": 0}],
+        )
+        memory_collection = make_mock_collection()
         from rag_app import retrieve_context
 
         context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
@@ -89,9 +100,24 @@ class TestRetrieveContext:
         assert "AI is transforming industries." in context
         assert "From your documents" in context
 
+    def test_includes_source_in_context(self):
+        docs_collection = make_mock_collection(
+            docs=["Some content."],
+            ids=["id_0"],
+            metadatas=[{"source": "notes.txt", "chunk_index": 0}],
+        )
+        memory_collection = make_mock_collection()
+        from rag_app import retrieve_context
+
+        context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
+
+        assert "notes.txt" in context
+
     def test_includes_memory_in_context(self):
-        docs_collection = make_mock_collection(docs=[])
-        memory_collection = make_mock_collection(docs=["User: hello\nAssistant: hi!"], ids=[0])
+        docs_collection = make_mock_collection()
+        memory_collection = make_mock_collection(
+            docs=["User: hello\nAssistant: hi!"], ids=["id_0"]
+        )
         from rag_app import retrieve_context
 
         context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
@@ -100,8 +126,14 @@ class TestRetrieveContext:
         assert "From past conversations" in context
 
     def test_combines_docs_and_memory(self):
-        docs_collection = make_mock_collection(docs=["Document content."], ids=[0])
-        memory_collection = make_mock_collection(docs=["Past conversation."], ids=[0])
+        docs_collection = make_mock_collection(
+            docs=["Document content."],
+            ids=["id_0"],
+            metadatas=[{"source": "doc.txt", "chunk_index": 0}],
+        )
+        memory_collection = make_mock_collection(
+            docs=["Past conversation."], ids=["id_0"]
+        )
         from rag_app import retrieve_context
 
         context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
@@ -110,8 +142,8 @@ class TestRetrieveContext:
         assert "Past conversation." in context
 
     def test_returns_empty_string_when_both_collections_empty(self):
-        docs_collection = make_mock_collection(docs=[])
-        memory_collection = make_mock_collection(docs=[])
+        docs_collection = make_mock_collection()
+        memory_collection = make_mock_collection()
         from rag_app import retrieve_context
 
         context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])

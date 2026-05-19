@@ -44,10 +44,11 @@ def main():
         chunks = chunk_text(doc["text"])
         for i, chunk in enumerate(chunks):
             emb = get_embedding(chunk)
-            collection.add(
+            collection.upsert(
                 documents=[chunk],
                 embeddings=[emb],
                 ids=[f"{doc['id']}-chunk-{i}"],
+                metadatas=[{"source": doc["id"], "chunk_index": i}],
             )
 
     print(f"Ingestion complete. {len(docs)} document(s) processed.")

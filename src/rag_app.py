@@ -24,14 +24,22 @@ def retrieve_context(docs_collection, memory_collection, query_emb: list[float])
 
     n_docs = len(docs_collection.get()["ids"])
     if n_docs > 0:
-        results = docs_collection.query(query_embeddings=[query_emb], n_results=min(3, n_docs))
+        results = docs_collection.query(
+            query_embeddings=[query_emb],
+            n_results=min(3, n_docs),
+            include=["documents", "metadatas"],
+        )
         context += "### From your documents:\n"
-        for doc in results["documents"][0]:
-            context += doc + "\n---\n"
+        for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
+            source = meta.get("source", "unknown") if meta else "unknown"
+            context += f"[{source}]\n{doc}\n---\n"
 
     n_mem = len(memory_collection.get()["ids"])
     if n_mem > 0:
-        results = memory_collection.query(query_embeddings=[query_emb], n_results=min(2, n_mem))
+        results = memory_collection.query(
+            query_embeddings=[query_emb],
+            n_results=min(2, n_mem),
+        )
         context += "\n### From past conversations:\n"
         for mem in results["documents"][0]:
             context += mem + "\n---\n"
