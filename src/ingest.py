@@ -1,9 +1,9 @@
 import os
 import chromadb
 from embeddings import get_embedding
+from config import DATA_DIR
 from typing import List, Dict
 
-DATA_DIR = "docs"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 
@@ -36,7 +36,8 @@ def load_documents(data_dir: str = DATA_DIR) -> List[Dict[str, str]]:
 
 
 def main():
-    client = chromadb.PersistentClient("chroma_db")
+    from config import CHROMA_PATH
+    client = chromadb.PersistentClient(CHROMA_PATH)
     collection = client.get_or_create_collection("docs")
 
     docs = load_documents()

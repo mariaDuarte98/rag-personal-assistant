@@ -2,8 +2,7 @@ import uuid
 import chromadb
 from embeddings import get_embedding
 from gemini_client import get_gemini_llm
-
-CHROMA_PATH = "chroma_db"
+from config import CHROMA_PATH
 
 
 def embed_query(query: str) -> list[float]:

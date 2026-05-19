@@ -1,29 +1,29 @@
 FROM python:3.11-slim
 
-# Set working directory
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
 WORKDIR /app
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
 RUN pip install --no-cache-dir poetry==1.8.3
 
-# Copy dependency files first (layer caching)
 COPY pyproject.toml poetry.lock ./
 
-# Install dependencies (no dev deps, no virtualenv inside container)
 RUN poetry config virtualenvs.create false \
     && poetry install --without dev --no-interaction --no-ansi
 
-# Copy source code
-COPY src/ ./src/
-COPY docs/ ./docs/
+# Pre-download the embedding model so first run is instant
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
-# Create directory for ChromaDB persistence
+COPY src/ ./src/
+
+# Mount your docs at runtime: docker run -v ./docs:/app/docs ...
+VOLUME ["/app/docs"]
+
 RUN mkdir -p chroma_db
 
-# Default command
 CMD ["python", "src/rag_app.py"]
