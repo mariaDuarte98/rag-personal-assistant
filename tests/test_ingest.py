@@ -2,6 +2,7 @@
 import os
 import tempfile
 import pytest
+from unittest.mock import patch, MagicMock
 
 
 class TestChunkText:
@@ -80,3 +81,38 @@ class TestLoadDocuments:
         from ingest import load_documents
         with pytest.raises(FileNotFoundError, match="Documents directory not found"):
             load_documents("/nonexistent/path/that/does/not/exist")
+
+
+class TestIngestUsesUpsert:
+
+    @patch("ingest.get_embedding")
+    @patch("ingest.load_documents")
+    @patch("ingest.chromadb.PersistentClient")
+    def test_upsert_called_with_metadata(self, mock_client, mock_load, mock_embed):
+        mock_embed.return_value = [0.1, 0.2]
+        mock_load.return_value = [{"id": "notes.txt", "text": "Hello world"}]
+        mock_collection = MagicMock()
+        mock_client.return_value.get_or_create_collection.return_value = mock_collection
+
+        from ingest import main
+        main()
+
+        mock_collection.upsert.assert_called_once()
+        call_kwargs = mock_collection.upsert.call_args.kwargs
+        assert call_kwargs["metadatas"][0]["source"] == "notes.txt"
+        assert call_kwargs["metadatas"][0]["chunk_index"] == 0
+
+    @patch("ingest.get_embedding")
+    @patch("ingest.load_documents")
+    @patch("ingest.chromadb.PersistentClient")
+    def test_reingest_does_not_raise(self, mock_client, mock_load, mock_embed):
+        mock_embed.return_value = [0.1, 0.2]
+        mock_load.return_value = [{"id": "notes.txt", "text": "Hello world"}]
+        mock_collection = MagicMock()
+        mock_client.return_value.get_or_create_collection.return_value = mock_collection
+
+        from ingest import main
+        main()
+        main()
+
+        assert mock_collection.upsert.call_count == 2
