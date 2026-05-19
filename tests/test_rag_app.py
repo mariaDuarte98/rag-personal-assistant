@@ -53,6 +53,29 @@ class TestAddMemory:
         call_kwargs = mock_collection.add.call_args.kwargs
         assert call_kwargs["ids"] == ["memory-42"]
 
+    @patch("rag_app.get_embedding")
+    def test_auto_generates_unique_memory_id(self, mock_get_embedding):
+        mock_get_embedding.return_value = [0.1]
+        mock_collection = MagicMock()
+        from rag_app import add_memory
+
+        id1 = add_memory(mock_collection, "first turn")
+        id2 = add_memory(mock_collection, "second turn")
+
+        assert id1.startswith("memory-")
+        assert id2.startswith("memory-")
+        assert id1 != id2
+
+    @patch("rag_app.get_embedding")
+    def test_returns_memory_id(self, mock_get_embedding):
+        mock_get_embedding.return_value = [0.1]
+        mock_collection = MagicMock()
+        from rag_app import add_memory
+
+        returned_id = add_memory(mock_collection, "some text", "memory-99")
+
+        assert returned_id == "memory-99"
+
 
 class TestRetrieveContext:
 

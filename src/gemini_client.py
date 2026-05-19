@@ -3,13 +3,23 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 load_dotenv()
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-model = genai.GenerativeModel('gemini-2.5-flash')
+_model = None
+
+
+def _get_model():
+    global _model
+    if _model is None:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            raise EnvironmentError("GEMINI_API_KEY environment variable is not set")
+        genai.configure(api_key=api_key)
+        _model = genai.GenerativeModel("gemini-2.5-flash")
+    return _model
+
 
 def get_gemini_llm():
-    """Return a function that generates text given a prompt."""
     def llm(prompt: str) -> str:
-        response = model.generate_content(prompt)
+        response = _get_model().generate_content(prompt)
         return response.text
     return llm

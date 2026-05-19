@@ -1,9 +1,16 @@
-from sentence_transformers import SentenceTransformer
 from typing import List
 
-# Initialize the local embedding model
-embed_model = SentenceTransformer('all-MiniLM-L6-v2')
+_MODEL_NAME = "all-MiniLM-L6-v2"
+_model = None
+
+
+def _get_model():
+    global _model
+    if _model is None:
+        from sentence_transformers import SentenceTransformer
+        _model = SentenceTransformer(_MODEL_NAME)
+    return _model
+
 
 def get_embedding(text: str) -> List[float]:
-    """Generate embedding for a given text."""
-    return embed_model.encode(text).tolist()
+    return _get_model().encode(text).tolist()
