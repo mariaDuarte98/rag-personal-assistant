@@ -1,0 +1,25 @@
+-- EXAMPLE FILE --
+Replace this file with your own .txt documents. The assistant will ingest
+anything you place in this folder. Some ideas: notes, articles, a personal
+bio, research papers, meeting notes, or study material.
+-- END EXAMPLE --
+
+Name: Maria Duarte
+Role: Data / AI Engineer
+
+Background:
+Maria is a data and AI engineer with experience building end-to-end machine learning and data pipelines. She has a strong foundation in Python and is focused on applied AI — particularly retrieval-augmented generation, NLP, and LLM-powered applications.
+
+Projects:
+- RAG Personal Assistant: a local RAG system that ingests personal documents into ChromaDB, retrieves the most relevant context at query time, and answers questions using Google Gemini. Built with sentence-transformers for local embeddings, a structured prompt with conversation history, and a CI pipeline using GitHub Actions.
+- Has worked on data ingestion pipelines, vector search systems, and LLM integrations.
+
+Technical skills:
+- Languages: Python (primary), SQL
+- AI/ML: sentence-transformers, Hugging Face, Google Gemini API, RAG architecture, vector databases
+- Data engineering: pipeline design, data ingestion, ETL
+- Tools: ChromaDB, Poetry, Docker, GitHub Actions, Ruff, pytest
+- Practices: test-driven development, CI/CD, clean code, code review
+
+What Maria is looking for:
+A role in data engineering or AI/ML engineering where she can work on real-world systems — building reliable data pipelines, integrating LLMs into products, or designing retrieval and search systems.

@@ -100,7 +100,7 @@ cp .env.example .env
 ### Usage
 
 ```bash
-# Ingest documents — sample files are included in docs/ to try immediately
+# Ingest documents — an example file is included in docs/ to try immediately
 poetry run python src/ingest.py
 
 # Start the assistant
@@ -109,7 +109,7 @@ poetry run python src/rag_app.py
 
 Type `exit` or `quit` to stop the session. All conversations are automatically saved.
 
-> Add your own `.txt` files to `docs/` and re-run `ingest.py` to extend the knowledge base.
+> Replace or add `.txt` files in `docs/` with your own content (notes, articles, a personal bio) and re-run `ingest.py`.
 
 ---
 
