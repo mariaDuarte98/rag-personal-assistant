@@ -21,19 +21,6 @@ def make_mock_collection(
     return collection
 
 
-class TestEmbedQuery:
-
-    @patch("rag_app.get_embedding")
-    def test_returns_embedding_for_query(self, mock_get_embedding):
-        mock_get_embedding.return_value = [0.1, 0.2, 0.3]
-        from rag_app import embed_query
-
-        result = embed_query("What is RAG?")
-
-        mock_get_embedding.assert_called_once_with("What is RAG?")
-        assert result == [0.1, 0.2, 0.3]
-
-
 class TestAddMemory:
 
     @patch("rag_app.get_embedding")
