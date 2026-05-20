@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install --no-cache-dir poetry==1.8.3
 
+# Install CPU-only PyTorch before Poetry so sentence-transformers reuses it
+# instead of pulling the full multi-GB CUDA build
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
 COPY pyproject.toml poetry.lock ./
 
 RUN poetry config virtualenvs.create false \
