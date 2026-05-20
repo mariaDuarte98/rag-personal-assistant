@@ -127,8 +127,17 @@ poetry run pytest tests/ -v
 # Build
 docker build -t rag-personal-assistant .
 
-# Run (mount your docs folder at runtime)
-docker run -it --env-file .env -v ./docs:/app/docs rag-personal-assistant
+# Ingest documents
+docker run --rm --env-file .env \
+  -v ./docs:/app/docs \
+  -v ./chroma_db:/app/chroma_db \
+  rag-personal-assistant python src/ingest.py
+
+# Run the assistant (chroma_db persists between runs)
+docker run -it --env-file .env \
+  -v ./docs:/app/docs \
+  -v ./chroma_db:/app/chroma_db \
+  rag-personal-assistant
 ```
 
 ---

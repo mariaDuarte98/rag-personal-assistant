@@ -39,6 +39,10 @@ def main():
     collection = client.get_or_create_collection("docs")
 
     docs = load_documents()
+    if not docs:
+        print(f"No .txt files found in '{DATA_DIR}'. Add documents and re-run.")
+        return
+
     for doc in docs:
         chunks = chunk_text(doc["text"])
         for i, chunk in enumerate(chunks):
