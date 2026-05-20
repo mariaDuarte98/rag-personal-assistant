@@ -1,0 +1,15 @@
+Retrieval-Augmented Generation (RAG)
+
+RAG is an AI architecture that combines information retrieval with text generation. Instead of relying solely on a language model's training knowledge, RAG first searches a knowledge base for relevant documents and then passes that context to the model when generating a response.
+
+How it works:
+1. Ingestion: documents are split into chunks, embedded into vectors, and stored in a vector database.
+2. Retrieval: at query time, the user's question is embedded and the most similar chunks are fetched.
+3. Generation: the retrieved chunks are injected into the prompt so the language model can ground its answer in real content.
+
+Why RAG matters:
+- Reduces hallucination by anchoring responses to actual source material.
+- Lets you update the knowledge base without retraining the model.
+- Enables private or domain-specific knowledge to be used with general-purpose LLMs.
+
+Common vector databases used in RAG systems include ChromaDB, Pinecone, Weaviate, and FAISS. Embedding models such as sentence-transformers convert text into dense numeric vectors that capture semantic meaning, allowing similarity search to find contextually relevant passages even when the exact words differ.

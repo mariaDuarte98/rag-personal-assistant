@@ -1,0 +1,19 @@
+Python Tips and Best Practices
+
+Lazy loading:
+Importing heavy libraries at module level slows startup. Use lazy imports — only import inside the function or class that needs them, or guard with a module-level None and initialize on first use. This is especially useful for ML libraries like torch, sentence-transformers, and tensorflow.
+
+Virtual environments:
+Always work inside a virtual environment to isolate dependencies. Poetry manages this automatically with `poetry install` and `poetry run`. Never install packages globally when working on a project.
+
+Type hints:
+Adding type hints (def foo(x: int) -> str) improves readability and enables static analysis with mypy or pyright. Use `from __future__ import annotations` at the top of the file to enable forward references without runtime cost.
+
+Environment variables:
+Never hard-code secrets. Use python-dotenv to load a .env file locally, and set real environment variables in production. Always provide a .env.example that lists required keys without values.
+
+Testing:
+Use pytest for tests. Mock external dependencies (APIs, databases) with unittest.mock so tests are fast and do not require network access. Use conftest.py to share fixtures across test files.
+
+Linting:
+Ruff is a fast Python linter and formatter that replaces flake8, isort, and black. Run it with `ruff check .` and optionally `ruff format .` to keep code style consistent.

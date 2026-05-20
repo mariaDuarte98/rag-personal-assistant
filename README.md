@@ -16,7 +16,7 @@ A personal AI assistant powered by a **Retrieval-Augmented Generation (RAG)** pi
 - 📄 **Local document ingestion** — ingest any text files into a persistent vector store
 - 🔍 **Semantic search** — retrieves the most relevant context before answering
 - 🧠 **Conversation memory** — past interactions are stored and retrieved for context-aware responses
-- 🔒 **Fully local** — your documents never leave your machine
+- 🔒 **Local embeddings** — documents are embedded and stored locally; only the prompt context is sent to the Gemini API
 
 ---
 
@@ -100,7 +100,7 @@ cp .env.example .env
 ### Usage
 
 ```bash
-# Ingest your documents (put .txt files in /docs first)
+# Ingest documents — sample files are included in docs/ to try immediately
 poetry run python src/ingest.py
 
 # Start the assistant
@@ -108,6 +108,8 @@ poetry run python src/rag_app.py
 ```
 
 Type `exit` or `quit` to stop the session. All conversations are automatically saved.
+
+> Add your own `.txt` files to `docs/` and re-run `ingest.py` to extend the knowledge base.
 
 ---
 
