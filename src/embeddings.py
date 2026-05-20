@@ -1,5 +1,3 @@
-from typing import List
-
 _MODEL_NAME = "all-MiniLM-L6-v2"
 _model = None
 
@@ -12,5 +10,5 @@ def _get_model():
     return _model
 
 
-def get_embedding(text: str) -> List[float]:
+def get_embedding(text: str) -> list[float]:
     return _get_model().encode(text).tolist()

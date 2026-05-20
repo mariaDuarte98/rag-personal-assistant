@@ -1,14 +1,13 @@
 import os
 import chromadb
 from embeddings import get_embedding
-from config import DATA_DIR
-from typing import List, Dict
+from config import DATA_DIR, CHROMA_PATH
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 
 
-def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> List[str]:
+def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:
     """Split text into overlapping fixed-size chunks."""
     if not text.strip():
         return []
@@ -23,11 +22,11 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVE
     return chunks
 
 
-def load_documents(data_dir: str = DATA_DIR) -> List[Dict[str, str]]:
+def load_documents(data_dir: str = DATA_DIR) -> list[dict[str, str]]:
     if not os.path.isdir(data_dir):
         raise FileNotFoundError(f"Documents directory not found: {data_dir}")
     docs = []
-    for filename in os.listdir(data_dir):
+    for filename in sorted(os.listdir(data_dir)):
         if filename.endswith(".txt"):
             path = os.path.join(data_dir, filename)
             with open(path, "r", encoding="utf-8") as f:
@@ -36,7 +35,6 @@ def load_documents(data_dir: str = DATA_DIR) -> List[Dict[str, str]]:
 
 
 def main():
-    from config import CHROMA_PATH
     client = chromadb.PersistentClient(CHROMA_PATH)
     collection = client.get_or_create_collection("docs")
 
