@@ -48,8 +48,10 @@ class TestLoadDocuments:
 
     def test_loads_txt_files(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            open(os.path.join(tmpdir, "a.txt"), "w").write("Document A")
-            open(os.path.join(tmpdir, "b.txt"), "w").write("Document B")
+            with open(os.path.join(tmpdir, "a.txt"), "w") as f:
+                f.write("Document A")
+            with open(os.path.join(tmpdir, "b.txt"), "w") as f:
+                f.write("Document B")
             from ingest import load_documents
             docs = load_documents(tmpdir)
         assert len(docs) == 2
@@ -57,8 +59,10 @@ class TestLoadDocuments:
 
     def test_ignores_non_txt_files(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            open(os.path.join(tmpdir, "notes.txt"), "w").write("Keep me")
-            open(os.path.join(tmpdir, "image.png"), "w").write("Ignore me")
+            with open(os.path.join(tmpdir, "notes.txt"), "w") as f:
+                f.write("Keep me")
+            with open(os.path.join(tmpdir, "image.png"), "w") as f:
+                f.write("Ignore me")
             from ingest import load_documents
             docs = load_documents(tmpdir)
         assert len(docs) == 1
@@ -66,7 +70,8 @@ class TestLoadDocuments:
 
     def test_returns_correct_text_content(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            open(os.path.join(tmpdir, "doc.txt"), "w").write("Hello RAG world")
+            with open(os.path.join(tmpdir, "doc.txt"), "w") as f:
+                f.write("Hello RAG world")
             from ingest import load_documents
             docs = load_documents(tmpdir)
         assert docs[0]["text"] == "Hello RAG world"

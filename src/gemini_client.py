@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from config import GEMINI_MODEL
 
 load_dotenv()
 
@@ -14,7 +15,7 @@ def _get_model():
         if not api_key:
             raise EnvironmentError("GEMINI_API_KEY environment variable is not set")
         genai.configure(api_key=api_key)
-        _model = genai.GenerativeModel("gemini-2.5-flash")
+        _model = genai.GenerativeModel(GEMINI_MODEL)
     return _model
 
 

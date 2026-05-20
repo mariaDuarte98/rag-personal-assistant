@@ -31,7 +31,7 @@ def add_memory(memory_collection, text: str, memory_id: str | None = None) -> st
 def retrieve_context(docs_collection, memory_collection, query_emb: list[float]) -> str:
     context = ""
 
-    n_docs = len(docs_collection.get()["ids"])
+    n_docs = docs_collection.count()
     if n_docs > 0:
         results = docs_collection.query(
             query_embeddings=[query_emb],
@@ -43,7 +43,7 @@ def retrieve_context(docs_collection, memory_collection, query_emb: list[float])
             source = meta.get("source", "unknown") if meta else "unknown"
             context += f"[{source}]\n{doc}\n---\n"
 
-    n_mem = len(memory_collection.get()["ids"])
+    n_mem = memory_collection.count()
     if n_mem > 0:
         results = memory_collection.query(
             query_embeddings=[query_emb],
@@ -90,7 +90,12 @@ def main():
         context = retrieve_context(docs_collection, memory_collection, query_emb)
         prompt = build_prompt(user_input, context, history[-MAX_HISTORY:])
 
-        answer = llm(prompt)
+        try:
+            answer = llm(prompt)
+        except Exception as e:
+            print(f"\n[Error contacting Gemini: {e}. Please try again.]")
+            continue
+
         print("\nAssistant:", answer)
 
         history.append({"user": user_input, "assistant": answer})

@@ -8,9 +8,10 @@ def make_mock_collection(
     metadatas: list[dict] | None = None,
 ):
     collection = MagicMock()
-    collection.get.return_value = {"ids": ids or []}
     _docs = docs or []
+    _ids = ids or []
     _metas = metadatas or [{}] * len(_docs)
+    collection.count.return_value = len(_ids)
     collection.query.return_value = {
         "documents": [_docs],
         "metadatas": [_metas],
@@ -204,7 +205,7 @@ class TestRetrieveContext:
 
         retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
 
-        docs_collection.get.assert_called_once()
+        docs_collection.count.assert_called_once()
         docs_collection.query.assert_not_called()
-        memory_collection.get.assert_called_once()
+        memory_collection.count.assert_called_once()
         memory_collection.query.assert_not_called()
