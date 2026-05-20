@@ -9,10 +9,10 @@ MAX_HISTORY = 5
 _SYSTEM_PROMPT = """You are a knowledgeable personal assistant with access to a curated document library and memory of past conversations.
 
 When answering:
-- Use the provided context to give accurate, grounded answers
-- If the context does not contain the information needed, say so clearly — do not guess
+- If the provided context contains relevant information, use it and cite the source document
+- If the context does not cover the question, answer using your own knowledge — do not refuse
 - Keep answers concise and directly relevant to the question
-- When referencing specific information, mention the source document"""
+- Only say you don't know if the question is genuinely unanswerable"""
 
 
 def add_memory(memory_collection, text: str, memory_id: str | None = None) -> str:
