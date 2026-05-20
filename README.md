@@ -64,7 +64,7 @@ rag-personal-assistant/
 ├── chroma_db/              # Persistent vector store (git-ignored)
 ├── .github/
 │   └── workflows/
-│       └── ci.yml          # CI: lint + tests on every push
+│       └── ci.yaml         # CI: lint + tests on every push
 ├── Dockerfile
 ├── .env.example
 ├── .gitignore

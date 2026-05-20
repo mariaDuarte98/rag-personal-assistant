@@ -15,10 +15,6 @@ When answering:
 - When referencing specific information, mention the source document"""
 
 
-def embed_query(query: str) -> list[float]:
-    return get_embedding(query)
-
-
 def add_memory(memory_collection, text: str, memory_id: str | None = None) -> str:
     """Persist a conversation turn. Returns the id used."""
     if memory_id is None:
@@ -86,7 +82,7 @@ def main():
         if user_input.lower() in ["exit", "quit"]:
             break
 
-        query_emb = embed_query(user_input)
+        query_emb = get_embedding(user_input)
         context = retrieve_context(docs_collection, memory_collection, query_emb)
         prompt = build_prompt(user_input, context, history[-MAX_HISTORY:])
 

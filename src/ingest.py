@@ -49,6 +49,7 @@ def main():
                 ids=[f"{doc['id']}-chunk-{i}"],
                 metadatas=[{"source": doc["id"], "chunk_index": i}],
             )
+        print(f"  {doc['id']} — {len(chunks)} chunk(s)")
 
     print(f"Ingestion complete. {len(docs)} document(s) processed.")
 
