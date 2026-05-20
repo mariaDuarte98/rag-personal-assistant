@@ -118,6 +118,11 @@ class TestBuildPrompt:
         result = build_prompt("query", "ctx", [])
         assert "personal assistant" in result.lower()
 
+    def test_system_prompt_allows_general_knowledge_fallback(self):
+        from rag_app import _SYSTEM_PROMPT
+        assert "own knowledge" in _SYSTEM_PROMPT.lower()
+        assert "do not guess" not in _SYSTEM_PROMPT.lower()
+
 
 class TestRetrieveContext:
 
