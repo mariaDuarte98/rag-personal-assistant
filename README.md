@@ -48,7 +48,7 @@ flowchart TD
 rag-personal-assistant/
 │
 ├── src/
-│   ├── embeddings.py       # Embedding generation & vector search
+│   ├── embeddings.py       # Local sentence embedding generation
 │   ├── gemini_client.py    # Google Gemini API wrapper
 │   ├── ingest.py           # Document loading & ingestion pipeline
 │   └── rag_app.py          # Main app — orchestrates RAG loop
