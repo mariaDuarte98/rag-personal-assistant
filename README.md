@@ -107,6 +107,8 @@ poetry run python src/ingest.py
 poetry run python src/rag_app.py
 ```
 
+> **Tip:** run `poetry shell` once to activate the virtual environment, then drop the `poetry run` prefix for all subsequent commands.
+
 Type `exit` or `quit` to stop the session. All conversations are automatically saved.
 
 > Replace or add `.txt` files in `docs/` with your own content (notes, articles, a personal bio) and re-run `ingest.py`.
@@ -116,7 +118,7 @@ Type `exit` or `quit` to stop the session. All conversations are automatically s
 ## 🧪 Running Tests
 
 ```bash
-poetry run pytest tests/ -v
+poetry run pytest -v
 ```
 
 ---
