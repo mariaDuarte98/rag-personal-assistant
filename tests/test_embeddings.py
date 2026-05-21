@@ -3,6 +3,28 @@ from unittest.mock import patch
 import numpy as np
 
 
+class TestGetModel:
+
+    def test_lazy_loads_model_on_first_call(self):
+        import embeddings
+        embeddings._model = None
+
+        model = embeddings._get_model()
+
+        assert model is not None
+        embeddings._model = None  # cleanup
+
+    def test_caches_model_after_first_call(self):
+        import embeddings
+        embeddings._model = None
+
+        model1 = embeddings._get_model()
+        model2 = embeddings._get_model()
+
+        assert model1 is model2
+        embeddings._model = None  # cleanup
+
+
 class TestGetEmbedding:
 
     @patch("embeddings._get_model")

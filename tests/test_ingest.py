@@ -107,6 +107,18 @@ class TestIngestUsesUpsert:
         assert call_kwargs["metadatas"][0]["source"] == "notes.txt"
         assert call_kwargs["metadatas"][0]["chunk_index"] == 0
 
+    @patch("ingest.load_documents", return_value=[])
+    @patch("ingest.chromadb.PersistentClient")
+    def test_main_exits_early_when_no_documents(self, mock_client, mock_load, capsys):
+        mock_collection = MagicMock()
+        mock_client.return_value.get_or_create_collection.return_value = mock_collection
+
+        from ingest import main
+        main()
+
+        mock_collection.upsert.assert_not_called()
+        assert "No .txt files found" in capsys.readouterr().out
+
     @patch("ingest.get_embedding")
     @patch("ingest.load_documents")
     @patch("ingest.chromadb.PersistentClient")

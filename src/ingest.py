@@ -58,5 +58,5 @@ def main():
     print(f"Ingestion complete. {len(docs)} document(s) processed.")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

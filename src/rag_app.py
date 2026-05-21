@@ -1,5 +1,6 @@
 import uuid
 import chromadb
+from chromadb import Collection
 from embeddings import get_embedding
 from gemini_client import get_gemini_llm
 from config import CHROMA_PATH
@@ -15,7 +16,7 @@ When answering:
 - Only say you don't know if the question is genuinely unanswerable"""
 
 
-def add_memory(memory_collection, text: str, memory_id: str | None = None) -> str:
+def add_memory(memory_collection: Collection, text: str, memory_id: str | None = None) -> str:
     """Persist a conversation turn. Returns the id used."""
     if memory_id is None:
         memory_id = f"memory-{uuid.uuid4().hex}"
@@ -24,7 +25,7 @@ def add_memory(memory_collection, text: str, memory_id: str | None = None) -> st
     return memory_id
 
 
-def retrieve_context(docs_collection, memory_collection, query_emb: list[float]) -> str:
+def retrieve_context(docs_collection: Collection, memory_collection: Collection, query_emb: list[float]) -> str:
     context = ""
 
     n_docs = docs_collection.count()
@@ -68,7 +69,7 @@ def build_prompt(query: str, context: str, history: list[dict[str, str]]) -> str
     )
 
 
-def main():
+def main() -> None:
     llm = get_gemini_llm()
     client = chromadb.PersistentClient(CHROMA_PATH)
 
@@ -98,5 +99,5 @@ def main():
         add_memory(memory_collection, f"User: {user_input}\nAssistant: {answer}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
