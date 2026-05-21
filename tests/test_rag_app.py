@@ -201,3 +201,37 @@ class TestRetrieveContext:
         docs_collection.query.assert_not_called()
         memory_collection.count.assert_called_once()
         memory_collection.query.assert_not_called()
+
+
+class TestMain:
+
+    @patch("rag_app.get_embedding", return_value=[0.1, 0.2])
+    @patch("rag_app.get_gemini_llm")
+    @patch("rag_app.chromadb")
+    @patch("builtins.input", side_effect=["how many bones in the body?", "exit"])
+    def test_main_runs_conversation_and_prints_answer(self, mock_input, mock_chromadb, mock_get_llm, mock_embed, capsys):
+        mock_llm = MagicMock(return_value="The human body has 206 bones.")
+        mock_get_llm.return_value = mock_llm
+        mock_collection = make_mock_collection()
+        mock_chromadb.PersistentClient.return_value.get_or_create_collection.return_value = mock_collection
+
+        from rag_app import main
+        main()
+
+        mock_llm.assert_called_once()
+        assert "206 bones" in capsys.readouterr().out
+
+    @patch("rag_app.get_embedding", return_value=[0.1, 0.2])
+    @patch("rag_app.get_gemini_llm")
+    @patch("rag_app.chromadb")
+    @patch("builtins.input", side_effect=["bad question", "exit"])
+    def test_main_handles_llm_error_gracefully(self, mock_input, mock_chromadb, mock_get_llm, mock_embed, capsys):
+        mock_llm = MagicMock(side_effect=Exception("quota exceeded"))
+        mock_get_llm.return_value = mock_llm
+        mock_collection = make_mock_collection()
+        mock_chromadb.PersistentClient.return_value.get_or_create_collection.return_value = mock_collection
+
+        from rag_app import main
+        main()  # must not raise
+
+        assert "Error contacting Gemini" in capsys.readouterr().out

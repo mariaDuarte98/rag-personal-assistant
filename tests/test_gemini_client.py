@@ -9,6 +9,33 @@ def make_mock_response(text: str = "Mocked response") -> MagicMock:
     return mock_response
 
 
+class TestGetModel:
+
+    @patch("gemini_client.genai")
+    @patch.dict("os.environ", {"GEMINI_API_KEY": "test-key"})
+    def test_configures_genai_with_api_key(self, mock_genai):
+        import gemini_client
+        gemini_client._model = None
+
+        gemini_client._get_model()
+
+        mock_genai.configure.assert_called_once_with(api_key="test-key")
+        gemini_client._model = None  # cleanup
+
+    @patch("gemini_client.genai")
+    @patch.dict("os.environ", {"GEMINI_API_KEY": "test-key"})
+    def test_caches_model_after_first_call(self, mock_genai):
+        import gemini_client
+        gemini_client._model = None
+
+        model1 = gemini_client._get_model()
+        model2 = gemini_client._get_model()
+
+        assert model1 is model2
+        mock_genai.configure.assert_called_once()  # not called twice
+        gemini_client._model = None  # cleanup
+
+
 class TestGetGeminiLlm:
 
     @patch("gemini_client._get_model")
