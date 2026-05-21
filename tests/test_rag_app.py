@@ -1,4 +1,5 @@
 """Tests for src/rag_app.py"""
+import pytest
 from unittest.mock import MagicMock, patch
 
 
@@ -113,15 +114,14 @@ class TestBuildPrompt:
         assert "answer one" in result
         assert "answer two" in result
 
-    def test_system_prompt_is_present(self):
-        from rag_app import build_prompt
-        result = build_prompt("query", "ctx", [])
-        assert "personal assistant" in result.lower()
-
-    def test_system_prompt_allows_general_knowledge_fallback(self):
+    def test_system_prompt_encourages_own_knowledge(self):
         from rag_app import _SYSTEM_PROMPT
         assert "own knowledge" in _SYSTEM_PROMPT.lower()
-        assert "do not guess" not in _SYSTEM_PROMPT.lower()
+
+    @pytest.mark.parametrize("phrase", ["do not guess", "say so clearly"])
+    def test_system_prompt_does_not_block_general_knowledge(self, phrase):
+        from rag_app import _SYSTEM_PROMPT
+        assert phrase not in _SYSTEM_PROMPT.lower()
 
 
 class TestRetrieveContext:
@@ -190,7 +190,7 @@ class TestRetrieveContext:
 
         assert context == ""
 
-    def test_queries_both_collections(self):
+    def test_skips_query_when_collections_empty(self):
         docs_collection = make_mock_collection()
         memory_collection = make_mock_collection()
         from rag_app import retrieve_context

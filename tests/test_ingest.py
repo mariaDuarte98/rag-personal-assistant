@@ -1,6 +1,4 @@
 """Tests for src/ingest.py"""
-import os
-import tempfile
 import pytest
 from unittest.mock import patch, MagicMock
 
@@ -9,31 +7,27 @@ class TestChunkText:
 
     def test_short_text_returns_single_chunk(self):
         from ingest import chunk_text
-        result = chunk_text("Hello world", chunk_size=500)
-        assert result == ["Hello world"]
+        assert chunk_text("Hello world", chunk_size=500) == ["Hello world"]
 
-    def test_empty_text_returns_empty_list(self):
+    @pytest.mark.parametrize("text", ["", "   ", "\n", "\t"])
+    def test_blank_text_returns_empty_list(self, text):
         from ingest import chunk_text
-        assert chunk_text("") == []
-        assert chunk_text("   ") == []
+        assert chunk_text(text) == []
 
     def test_long_text_is_split(self):
         from ingest import chunk_text
-        text = "a" * 1200
-        chunks = chunk_text(text, chunk_size=500, overlap=50)
+        chunks = chunk_text("a" * 1200, chunk_size=500, overlap=50)
         assert len(chunks) > 1
 
     def test_chunks_have_correct_size(self):
         from ingest import chunk_text
-        text = "x" * 1000
-        chunks = chunk_text(text, chunk_size=300, overlap=0)
+        chunks = chunk_text("x" * 1000, chunk_size=300, overlap=0)
         for chunk in chunks[:-1]:
             assert len(chunk) == 300
 
     def test_chunks_overlap(self):
         from ingest import chunk_text
-        text = "abcdefghij"
-        chunks = chunk_text(text, chunk_size=6, overlap=2)
+        chunks = chunk_text("abcdefghij", chunk_size=6, overlap=2)
         assert chunks[0][-2:] == chunks[1][:2]
 
     def test_full_text_is_covered(self):
@@ -46,41 +40,38 @@ class TestChunkText:
 
 class TestLoadDocuments:
 
-    def test_loads_txt_files(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            with open(os.path.join(tmpdir, "a.txt"), "w") as f:
-                f.write("Document A")
-            with open(os.path.join(tmpdir, "b.txt"), "w") as f:
-                f.write("Document B")
-            from ingest import load_documents
-            docs = load_documents(tmpdir)
+    def test_loads_txt_files(self, tmp_path):
+        (tmp_path / "a.txt").write_text("Document A")
+        (tmp_path / "b.txt").write_text("Document B")
+        from ingest import load_documents
+
+        docs = load_documents(str(tmp_path))
+
         assert len(docs) == 2
         assert {d["id"] for d in docs} == {"a.txt", "b.txt"}
 
-    def test_ignores_non_txt_files(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            with open(os.path.join(tmpdir, "notes.txt"), "w") as f:
-                f.write("Keep me")
-            with open(os.path.join(tmpdir, "image.png"), "w") as f:
-                f.write("Ignore me")
-            from ingest import load_documents
-            docs = load_documents(tmpdir)
+    @pytest.mark.parametrize("filename", ["image.png", "data.csv", "notes.md"])
+    def test_ignores_non_txt_files(self, tmp_path, filename):
+        (tmp_path / "notes.txt").write_text("Keep me")
+        (tmp_path / filename).write_text("Ignore me")
+        from ingest import load_documents
+
+        docs = load_documents(str(tmp_path))
+
         assert len(docs) == 1
         assert docs[0]["id"] == "notes.txt"
 
-    def test_returns_correct_text_content(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            with open(os.path.join(tmpdir, "doc.txt"), "w") as f:
-                f.write("Hello RAG world")
-            from ingest import load_documents
-            docs = load_documents(tmpdir)
+    def test_returns_correct_text_content(self, tmp_path):
+        (tmp_path / "doc.txt").write_text("Hello RAG world")
+        from ingest import load_documents
+
+        docs = load_documents(str(tmp_path))
+
         assert docs[0]["text"] == "Hello RAG world"
 
-    def test_returns_empty_list_when_no_txt_files(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            from ingest import load_documents
-            docs = load_documents(tmpdir)
-        assert docs == []
+    def test_returns_empty_list_when_no_txt_files(self, tmp_path):
+        from ingest import load_documents
+        assert load_documents(str(tmp_path)) == []
 
     def test_raises_if_directory_does_not_exist(self):
         from ingest import load_documents
