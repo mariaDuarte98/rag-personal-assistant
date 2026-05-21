@@ -34,7 +34,7 @@ def load_documents(data_dir: str = DATA_DIR) -> list[dict[str, str]]:
     return docs
 
 
-def main():
+def main() -> None:
     client = chromadb.PersistentClient(CHROMA_PATH)
     collection = client.get_or_create_collection("docs")
 
