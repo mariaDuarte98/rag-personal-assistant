@@ -119,7 +119,7 @@ Type `exit` or `quit` to stop the session. All conversations are automatically s
 
 | Decision | Why |
 |---|---|
-| **Two ChromaDB collections** | `docs` is static — ingested once from files. `memory` is dynamic — written every conversation turn. Keeping them separate allows different retrieval budgets (3 doc chunks, 2 memory turns) and clear separation of concerns. |
+| **Two ChromaDB collections** | `docs` is static — ingested once from files. `memory` is dynamic — written every conversation turn. Keeping them separate allows independent retrieval: up to 3 doc chunks and up to 2 past turns are fetched per query. |
 | **Local embeddings** | `sentence-transformers` runs entirely on your machine. Raw documents never leave your environment — only the retrieved context is sent to the Gemini API. |
 | **500-char overlapping chunks (50-char overlap)** | Small chunks improve retrieval precision by targeting specific passages rather than whole files. The overlap ensures sentences split across chunk boundaries are still retrievable. |
 | **Upsert over insert** | Re-running `ingest.py` is safe — existing chunks are updated in place, not duplicated. Chunk IDs are deterministic (`filename-chunk-N`), so the same file always maps to the same ID. |

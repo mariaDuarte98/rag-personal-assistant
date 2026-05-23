@@ -44,7 +44,7 @@ All CI checks must pass before merging.
 
 ## Key design decisions
 
-- **Two ChromaDB collections**: `docs` is static (ingested once); `memory` is dynamic (written every turn). Separate retrieval budgets: 3 doc chunks, 2 memory turns.
+- **Two ChromaDB collections**: `docs` is static (ingested once); `memory` is dynamic (written every turn). Independent retrieval: up to 3 doc chunks and up to 2 past turns fetched per query.
 - **Local embeddings**: `sentence-transformers` runs on-device — raw documents never leave the machine, only retrieved context goes to Gemini.
 - **Chunking**: 500-char overlapping chunks (50-char overlap) so retrieval targets specific passages, not whole files. Overlap prevents sentences split across boundaries from being missed.
 - **Upsert over add**: re-running ingestion is safe — existing chunks are updated in place, not duplicated. Chunk IDs are deterministic (`filename-chunk-N`).
