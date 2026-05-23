@@ -1,4 +1,5 @@
 import os
+from collections.abc import Callable
 from dotenv import load_dotenv
 import google.generativeai as genai
 from config import GEMINI_MODEL
@@ -19,7 +20,7 @@ def _get_model():
     return _model
 
 
-def get_gemini_llm():
+def get_gemini_llm() -> Callable[[str], str]:
     def llm(prompt: str) -> str:
         response = _get_model().generate_content(prompt)
         return response.text

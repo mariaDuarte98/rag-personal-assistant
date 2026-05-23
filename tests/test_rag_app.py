@@ -181,6 +181,19 @@ class TestRetrieveContext:
         assert "Document content." in context
         assert "Past conversation." in context
 
+    def test_falls_back_to_unknown_source_when_metadata_is_none(self):
+        docs_collection = make_mock_collection(
+            docs=["Some content."],
+            ids=["id_0"],
+            metadatas=[None],
+        )
+        memory_collection = make_mock_collection()
+        from rag_app import retrieve_context
+
+        context = retrieve_context(docs_collection, memory_collection, [0.1, 0.2])
+
+        assert "unknown" in context
+
     def test_returns_empty_string_when_both_collections_empty(self):
         docs_collection = make_mock_collection()
         memory_collection = make_mock_collection()
@@ -220,6 +233,21 @@ class TestMain:
 
         mock_llm.assert_called_once()
         assert "206 bones" in capsys.readouterr().out
+
+    @patch("rag_app.get_embedding", return_value=[0.1, 0.2])
+    @patch("rag_app.get_gemini_llm")
+    @patch("rag_app.chromadb")
+    @patch("builtins.input", side_effect=["", "   ", "exit"])
+    def test_main_skips_empty_input(self, mock_input, mock_chromadb, mock_get_llm, mock_embed):
+        mock_llm = MagicMock()
+        mock_get_llm.return_value = mock_llm
+        mock_collection = make_mock_collection()
+        mock_chromadb.PersistentClient.return_value.get_or_create_collection.return_value = mock_collection
+
+        from rag_app import main
+        main()
+
+        mock_llm.assert_not_called()
 
     @patch("rag_app.get_embedding", return_value=[0.1, 0.2])
     @patch("rag_app.get_gemini_llm")

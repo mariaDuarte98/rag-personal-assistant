@@ -59,7 +59,7 @@ def build_prompt(query: str, context: str, history: list[dict[str, str]]) -> str
         for turn in history
     ) if history else "No previous conversation."
 
-    context_text = context.strip() if context.strip() else "No relevant context found."
+    context_text = context.strip() or "No relevant context found."
 
     return (
         f"{_SYSTEM_PROMPT}\n\n"
@@ -82,10 +82,12 @@ def main() -> None:
         user_input = input("\nAsk your assistant something: ")
         if user_input.lower() in ["exit", "quit"]:
             break
+        if not user_input.strip():
+            continue
 
         query_emb = get_embedding(user_input)
         context = retrieve_context(docs_collection, memory_collection, query_emb)
-        prompt = build_prompt(user_input, context, history[-MAX_HISTORY:])
+        prompt = build_prompt(user_input, context, history)
 
         try:
             answer = llm(prompt)
