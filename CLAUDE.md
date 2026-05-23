@@ -44,8 +44,10 @@ All CI checks must pass before merging.
 
 ## Key design decisions
 
-- **Chunking**: 500-char overlapping chunks (50-char overlap) so retrieval targets specific passages, not whole files
-- **Upsert over add**: re-running ingestion is safe — existing chunks are updated, not duplicated
-- **Lazy model loading**: `SentenceTransformer` and Gemini are initialised on first use, not at import time
-- **UUID memory IDs**: avoids collisions when entries are deleted and re-added
-- **Metadata on chunks**: every chunk stores `{"source": filename, "chunk_index": i}` so the UI can show attribution
+- **Two ChromaDB collections**: `docs` is static (ingested once); `memory` is dynamic (written every turn). Independent retrieval: up to 3 doc chunks and up to 2 past turns fetched per query.
+- **Local embeddings**: `sentence-transformers` runs on-device — raw documents never leave the machine, only retrieved context goes to Gemini.
+- **Chunking**: 500-char overlapping chunks (50-char overlap) so retrieval targets specific passages, not whole files. Overlap prevents sentences split across boundaries from being missed.
+- **Upsert over add**: re-running ingestion is safe — existing chunks are updated in place, not duplicated. Chunk IDs are deterministic (`filename-chunk-N`).
+- **Lazy model loading**: `SentenceTransformer` and Gemini initialise on first use, not at import time — tests run without loading heavy models.
+- **Capped conversation history**: bounded to `MAX_HISTORY=5` turns in memory to keep prompt size predictable.
+- **UUID memory IDs**: avoids collisions when entries are deleted and re-added.
