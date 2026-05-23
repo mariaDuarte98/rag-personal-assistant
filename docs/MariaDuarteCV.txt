@@ -1,0 +1,71 @@
+MARIA DUARTE
+Backend & AI Engineer
+
+CONTACT
+GitHub: github.com/mariaDuarte98
+
+PROJECTS
+• Internal AI/RAG Agent - agentic automation
+• Weather Data Pipeline - Airflow + Parquet
+• DBT Car Subscriptions - DBT + DuckDB
+
+EDUCATION
+Master's degree in Computer Science
+Instituto Superior Técnico, Lisbon
+September 2019 - November 2021
+Major in intelligent systems.
+Achieved a grade of 18 (out of 20).
+
+Bachelor's degree in Computer Science
+Instituto Superior Técnico, Lisbon
+September 2016 - July 2019
+Achieved a grade of 16 (out of 20).
+
+Google Cloud Professional Data Engineer Certificate
+August 2022
+
+EXPERTISE
+• Python
+• Go
+• SQL
+• GCP
+• Terraform
+• Airflow
+• DBT
+
+EXPERIENCE
+Senior Customer Support Engineer
+Energyworx | January 2025 - Present
+• Promoted to Senior for leading backend engineering efforts, owning key technical areas, and becoming a key technical point of contact within the team.
+• Act as technical lead within the team, guiding code-level troubleshooting and mentoring peers in development best practices.
+• Lead ongoing improvements to an internal AI/RAG agent that retrieves technical/product knowledge and supports agentic automation workflows with human approval.
+• Develop data ingestion and transformation workflows on GCP (BigQuery, Pub/Sub, Scheduler, Cloud Run).
+• Own and extend internal tools and AI-assisted automation workflows, supporting infrastructure enhancements, platform reliability and test coverage.
+
+Customer Support Engineer
+Energyworx | September 2023 - January 2025
+• Worked on a Cloud platform for Meter Data Management for Grid Operators, enabling large-scale processing, validation, and analysis of energy data.
+• Contributed to both backend development and client support, resolving production issues, optimizing system performance, and collaborating with clients across multiple environments.
+• Developed internal Python and Go tools for automation, data analysis, GCP integration, API communication, and client testing, including Pytest/MagicMock-based validation workflows.
+• Worked with Terraform and GCP services including Cloud Run, Pub/Sub, Scheduler, IAM, and BigQuery.
+• Helped define automated testing using PyTest and BDD.
+
+Advanced App Engineering Analyst
+Accenture | January 2023 - August 2023
+• Promoted for taking ownership of critical backend components and delivering high-quality implementations in a big data platform.
+• Tackled complex technical challenges, improved system stability, and led data analysis efforts with Python and BigQuery to extract business insights.
+• Also recognized for enhancing internal workflows and contributing to high-impact features.
+
+Application Developer Associate
+Accenture | October 2021 - January 2023
+• Contributed to the configuration and development of services and applications in a cloud-based big data platform.
+• Developed and test backend services and data pipelines using Python, Java, and Flask.
+• Wrote unit and integration tests with Pytest and supported debugging of production issues.
+• Followed CI/CD pipelines and version control best practices using Git, GitLab, and Bitbucket.
+• Used tools and services including GCP (Pub/Sub, BigQuery), Pandas, Gradle, and Terraform.
+
+Research Grant
+INESC-ID | March 2021 - November 2021
+• Developed an automatic information extraction system for Portuguese Consumer Law using Natural Language Processing (NLP) and Named Entity Recognition (NER).
+• Collaborated with linguists to build a domain-specific annotated dataset and implemented deep learning models with PyTorch, TensorFlow, and Keras.
+• Presented research as part of MSc thesis in Informatics and Computing Engineering.
