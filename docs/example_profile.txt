@@ -2,7 +2,7 @@ Name: Maria Duarte
 Role: Senior Data / AI Engineer
 
 About:
-Maria Duarte is a data and AI engineer based in Lisbon, Portugal. She is logical and organised, with a strong drive for new challenges — she gets restless doing the same thing twice and thrives in environments where she is constantly learning. She is determined, a fast learner, and enjoys mathematics, logic, and problems that require both rigour and creative thinking. She also brings empathy and balance to how she works with people and systems alike.
+Maria Duarte is a data and AI engineer based in Lisbon, Portugal. She is logical and organised, with a strong drive for new challenges — she is energised by variety and thrives in environments where she is constantly learning. She is determined, a fast learner, and enjoys mathematics, logic, and problems that require both rigour and creative thinking. She also brings empathy and balance to how she works with people and systems alike.
 
 Education:
 Maria holds both a Bachelor's and a Master's degree from Instituto Superior Tecnico (Tecnico Lisboa), one of Europe's top engineering universities. She specialised in Intelligent Systems. She achieved a grade of 18 out of 20 in her Master's and 16 out of 20 in her Bachelor's. Her Master's covered a broad range of topics — robotics, game development, user experience, data science, and algorithms — reflecting her curiosity and range. Her thesis focused on building an automatic semantic information extraction system for Portuguese law using NLP and BERT. The project was a full end-to-end effort: processing and building corpora, collaborating with linguists on annotation, building databases, running extensive testing, and tuning classification thresholds.
@@ -24,13 +24,9 @@ Personal Projects:
 
 2. Weather ETL Pipeline: A modular ETL pipeline that extracts weather data from the OpenWeatherMap API, transforms it, and loads it into SQLite. Written in clean Python with separated pipeline stages (extract, transform, load).
 
-3. Weather Voyager: An advanced weather data project with Apache Airflow orchestration, ML forecasting (linear regression for temperature and humidity), and an interactive Streamlit dashboard. Ingests data for multiple global cities.
+3. Car Subscriptions dbt Project: A dbt Core and DuckDB project that transforms raw car subscription data into an analytical star schema across three layers (staging, intermediate, marts). Fully tested with dbt-utils and dbt-expectations, covering customer acquisition and fleet operations use-cases.
 
-4. Weather Insight Pipeline: An Airflow-orchestrated EL pipeline that fetches historical weather data from the Visual Crossing API and stores it in partitioned Parquet format optimised for analytics.
-
-5. Car Subscriptions dbt Project: A dbt Core and DuckDB project that transforms raw car subscription data into an analytical star schema across three layers (staging, intermediate, marts). Fully tested with dbt-utils and dbt-expectations, covering customer acquisition and fleet operations use-cases.
-
-6. Facial Emotion Recognition App: A video-based emotion recognition application using DeepFace and FER backends, OpenCV for image processing, and Gradio for the web UI. Supports webcam input and video file upload, with multiprocessing for performance.
+4. Facial Emotion Recognition App: A video-based emotion recognition application using DeepFace and FER backends, OpenCV for image processing, and Gradio for the web UI. Supports webcam input and video file upload, with multiprocessing for performance.
 
 What Maria is looking for:
-A role in data engineering or AI/ML engineering where she can work on real, complex systems — building reliable data pipelines, integrating LLMs into products, or designing retrieval and search systems. She wants to keep growing technically, take ownership of hard problems, and work in a team that values quality and clear thinking. She does not want to do the same thing on repeat.
+A role in data engineering or AI/ML engineering where she can work on real, complex systems — building reliable data pipelines, integrating LLMs into products, or designing retrieval and search systems. She wants to keep growing technically, take ownership of hard problems, and work in a team that values quality and clear thinking. She is motivated by complexity, ownership, and continuous growth.
