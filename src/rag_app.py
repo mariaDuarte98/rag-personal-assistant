@@ -17,7 +17,6 @@ When answering:
 
 
 def add_memory(memory_collection: Collection, text: str, memory_id: str | None = None) -> str:
-    """Persist a conversation turn. Returns the id used."""
     if memory_id is None:
         memory_id = f"memory-{uuid.uuid4().hex}"
     emb = get_embedding(text)
@@ -96,6 +95,8 @@ def main() -> None:
         print("\nAssistant:", answer)
 
         history.append({"user": user_input, "assistant": answer})
+        if len(history) > MAX_HISTORY:
+            history.pop(0)
         add_memory(memory_collection, f"User: {user_input}\nAssistant: {answer}")
 
 
