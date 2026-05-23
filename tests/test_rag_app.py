@@ -1,4 +1,5 @@
 """Tests for src/rag_app.py"""
+import pytest
 from unittest.mock import MagicMock, patch
 
 
@@ -117,13 +118,10 @@ class TestBuildPrompt:
         from rag_app import _SYSTEM_PROMPT
         assert "own knowledge" in _SYSTEM_PROMPT.lower()
 
-    def test_system_prompt_does_not_refuse_guessing(self):
+    @pytest.mark.parametrize("phrase", ["do not guess", "say so clearly"])
+    def test_system_prompt_does_not_block_general_knowledge(self, phrase):
         from rag_app import _SYSTEM_PROMPT
-        assert "do not guess" not in _SYSTEM_PROMPT.lower()
-
-    def test_system_prompt_does_not_demand_explicit_admission(self):
-        from rag_app import _SYSTEM_PROMPT
-        assert "say so clearly" not in _SYSTEM_PROMPT.lower()
+        assert phrase not in _SYSTEM_PROMPT.lower()
 
 
 class TestRetrieveContext:
