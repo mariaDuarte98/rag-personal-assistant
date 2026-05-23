@@ -113,6 +113,10 @@ Type `exit` or `quit` to stop the session. All conversations are automatically s
 
 > Replace or add `.txt` files in `docs/` with your own content (notes, articles, a personal bio) and re-run `ingest.py`.
 
+### Demo
+
+<img width="571" height="266" alt="Captura de ecrã 2026-05-23, às 19 48 26" src="https://github.com/user-attachments/assets/123ba42b-13ce-45df-854e-8d2e2f58a025" />
+
 ---
 
 ## 🧠 Design Decisions
