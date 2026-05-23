@@ -1,6 +1,15 @@
 """Tests for src/embeddings.py"""
+import pytest
 from unittest.mock import patch
 import numpy as np
+
+
+@pytest.fixture(autouse=True)
+def reset_embedding_model():
+    import embeddings
+    embeddings._model = None
+    yield
+    embeddings._model = None
 
 
 class TestGetModel:

@@ -17,6 +17,7 @@ When answering:
 
 
 def add_memory(memory_collection: Collection, text: str, memory_id: str | None = None) -> str:
+    """Persist a conversation turn. Returns the id used."""
     if memory_id is None:
         memory_id = f"memory-{uuid.uuid4().hex}"
     emb = get_embedding(text)

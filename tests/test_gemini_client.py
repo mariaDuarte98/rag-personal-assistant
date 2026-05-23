@@ -3,6 +3,14 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 
+@pytest.fixture(autouse=True)
+def reset_gemini_model():
+    import gemini_client
+    gemini_client._model = None
+    yield
+    gemini_client._model = None
+
+
 def make_mock_response(text: str = "Mocked response") -> MagicMock:
     mock_response = MagicMock()
     mock_response.text = text

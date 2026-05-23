@@ -11,7 +11,7 @@ def make_mock_collection(
     _docs = docs or []
     _ids = ids or []
     _metas = metadatas or [{}] * len(_docs)
-    collection.count.return_value = len(_docs)
+    collection.count.return_value = len(_ids)
     collection.query.return_value = {
         "documents": [_docs],
         "metadatas": [_metas],

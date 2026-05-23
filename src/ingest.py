@@ -8,6 +8,7 @@ CHUNK_OVERLAP = 50
 
 
 def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:
+    """Split text into overlapping fixed-size chunks."""
     if not text.strip():
         return []
     chunks = []
